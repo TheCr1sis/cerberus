@@ -1,0 +1,20 @@
+Starting Nmap 7.70 ( https://nmap.org ) at 2019-06-13 07:04 EDT
+Stats: 0:06:29 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 28.28% done; ETC: 07:27 (0:16:26 remaining)
+Stats: 0:06:31 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 28.46% done; ETC: 07:27 (0:16:25 remaining)
+Stats: 0:10:21 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 45.41% done; ETC: 07:27 (0:12:27 remaining)
+Stats: 0:10:25 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 45.78% done; ETC: 07:27 (0:12:21 remaining)
+Stats: 0:20:55 elapsed; 0 hosts completed (1 up), 1 undergoing Connect Scan
+Connect Scan Timing: About 92.54% done; ETC: 07:27 (0:01:41 remaining)
+Nmap scan report for DMZwebserver3.DicksonUnited.com (10.10.10.35)
+Host is up (0.00030s latency).
+All 65535 scanned ports on DMZwebserver3.DicksonUnited.com (10.10.10.35) are filtered
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: UNKNOWN
+Running: UNKNOWN
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 1364.04 seconds

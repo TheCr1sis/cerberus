@@ -1,0 +1,228 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Page Styling */
+body {
+    background-color: #f4f4f4;
+    color: #333;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    text-align: center;
+}
+
+/* Main Container */
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 800px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Title Styling */
+h1 {
+    font-size: 26px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    color: #2c3e50;
+    text-align: center;
+    width: 100%;
+}
+
+h2 {
+    font-size: 26px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    text-align: left;
+    width: 100%;
+}
+
+h3 {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+    text-align: center;
+    width: 100%;
+}
+
+h4 {
+    font-size: 26px;
+    margin-top: 20px;
+    color: #2c3e50;
+    text-align: center;
+    width: 100%;
+}
+
+label {
+    font-size: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    width: 100%;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Text Input Styling */
+input[type="text"] {
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    max-width: 400px;
+    font-size: 15px;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focused state */
+input[type="text"]:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+/* Hover state */
+input[type="text"]:hover {
+    border-color: #2980b9;
+}
+
+/* Optional: Styling the placeholder text */
+input[type="text"]::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Number Input Styling */
+input[type="number"] {
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    max-width: 400px;
+    font-size: 15px;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focused state */
+input[type="number"]:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+/* Hover state */
+input[type="number"]:hover {
+    border-color: #2980b9;
+}
+
+/* Regular button styles */
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    margin-top: 5px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.2s ease;
+    text-align: left;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover state with transform effect */
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Focused state */
+button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+/* Active state */
+button:active {
+    background-color: #2980b9;
+    transform: translateY(1px);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.remove-btn {
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+    margin-left: 7px;
+    transition: color 0.2s ease-in-out, transform 0.2s;
+}
+
+.remove-btn:hover {
+    color: darkred;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+}
+
+#exit-btn, #save-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 10px;
+    margin: 0;
+}
+
+/* Exit button styling */
+#exit-btn {
+    background-color: red;
+    color: white;
+}
+
+/* Save button styling */
+#save-btn {
+    background-color: green;
+    color: white;
+}
+
+/* Hover Effects */
+#exit-btn:hover {
+    background-color: darkred;
+}
+#save-btn:hover {
+    background-color: darkgreen;
+}

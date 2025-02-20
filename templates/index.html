@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IOC Scanner</title>
+    <meta name="author" content="Illia Bulhar">
+    <link rel="stylesheet" href="static/styles.css">
+    <script>
+        function toggleScanOptions(option) {
+            document.getElementById("newScanSection").style.display = option === 'new' ? 'block' : 'none';
+            document.getElementById("uploadResultsSection").style.display = option === 'upload' ? 'block' : 'none';
+            document.getElementById("fastScanSection").style.display = option === 'fast' ? 'block' : 'none';
+        }
+
+        function displayResults(results) {
+            const table = document.getElementById("resultsTable");
+            const tbody = table.querySelector("tbody");
+            tbody.innerHTML = "";
+
+            if (results.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 6;
+                cell.textContent = "No results found.";
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            } else {
+                results.forEach(result => {
+                    const row = document.createElement("tr");
+
+                    const cells = [
+                        result.filepath || "N/A",
+                        result.filename || "N/A",
+                        result.size || "N/A",
+                        result.hashes?.md5 || "N/A",
+                        result.hashes?.sha1 || "N/A",
+                        result.hashes?.sha256 || "N/A",
+                        result.matched_strings ? result.matched_strings.join(", ") : "N/A",
+                        result.matched?.join(", ") || "N/A"
+                    ];
+
+                    cells.forEach(cellText => {
+                        const cell = document.createElement("td");
+                        cell.textContent = cellText;
+                        row.appendChild(cell);
+                    });
+
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Show the "Scan Results" section after results are ready
+            document.getElementById("resultsHeader").style.display = 'block';
+            table.style.display = 'table';
+        }
+
+        // Function to handle IOC file click
+        function viewIocFile(filename) {
+            const url = `/view_ioc/${filename}`;
+            window.open(url, '_blank');
+        }
+
+        // Function to load results to a results table from results file
+        function loadResultsFile(filename) {
+            fetch(`/load_results/${filename}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.content) {
+                        displayResults(data.content);
+
+                        // Display the results file name and extension under "Scan Results" text
+                        const resultsFileName = document.getElementById("resultsFileName");
+                        resultsFileName.textContent = `Scan results for: ${data.filename}`;
+                        resultsFileName.style.display = 'block';
+
+                        // Display the associated IOC file name
+                        const associatedIocFileName = document.getElementById("associatedIocFileName");
+                        if (data.ioc_filename) {
+                            associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
+                        } else {
+                            associatedIocFileName.textContent = "Associated IOC file: N/A";
+                        }
+                        associatedIocFileName.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    alert("Error loading results: " + error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="file-lists">
+        <div class="file-box">
+            <h3>IOC Files</h3>
+            <ul id="iocFilesList"></ul>
+        </div>
+        <div class="file-box">
+            <h3>Results Files</h3>
+            <ul id="resultsFilesList"></ul>
+        </div>
+    </div>
+
+    <script>
+        async function fetchFiles() {
+            let response = await fetch("/list_files");
+            let data = await response.json();
+
+            let iocFilesList = document.getElementById("iocFilesList");
+            let resultsFilesList = document.getElementById("resultsFilesList");
+
+            iocFilesList.innerHTML = "";
+            resultsFilesList.innerHTML = "";
+
+            // Make IOC filenames clickable to open in a new tab
+            data.ioc_files.forEach(file => {
+                let li = document.createElement("li");
+                let a = document.createElement("a");
+                a.href = "#";
+                a.textContent = file;
+                a.onclick = function() { viewIocFile(file); };
+                li.appendChild(a);
+                iocFilesList.appendChild(li);
+            });
+
+            // Make Results filenames clickable to load results in table
+            data.result_files.forEach(file => {
+                let li = document.createElement("li");
+                let a = document.createElement("a");
+                a.href = "#";
+                a.textContent = file;
+                a.onclick = function() { loadResultsFile(file); };
+                li.appendChild(a);
+                resultsFilesList.appendChild(li);
+            });
+        }
+
+        fetchFiles();
+    </script>
+
+    <h1>IOC Scanner</h1>
+    <h2><a href="/create_ioc">Create a new IOC file</a></h2>
+
+    <button class="main-buttons" onclick="toggleScanOptions('new')">Manual Scan</button>
+    <button class="main-buttons" onclick="toggleScanOptions('upload')">Upload Scan Results File</button>
+    <button class="main-buttons" onclick="toggleScanOptions('fast')">Fast Scan</button>
+    <button onclick="openOnlineLookup()">Online Lookup</button>
+
+    <script>
+    function openOnlineLookup() {
+        window.open("/online_lookup", "_blank");
+    }
+    </script>
+
+    <div id="newScanSection" style="display:none;">
+        <h3>Upload IOC File (.json)</h3>
+        <form id="iocUploadForm">
+            <input type="file" id="iocFileInput" accept=".json" max="10MB">
+            <button type="submit">Upload IOC File</button>
+        </form>
+        <p id="iocFilePath" style="color: green;"></p>
+
+        <form id="scanForm">
+            <h3>Directory path to scan:</h3>
+            <input type="text" id="directoryPath" placeholder="/Path/To/Directory" maxlength="100" required>
+            <h3>Include subfolders?</h3>
+            <input type="checkbox" id="subfolders">
+            <button type="submit">Scan</button>
+        </form>
+    </div>
+
+    <div id="uploadResultsSection" style="display:none;">
+        <h3>Upload Scan Results File (.json)</h3>
+        <form id="uploadResultsForm">
+            <input type="file" id="scanResultsInput" accept=".json" max="100MB">
+            <button type="submit">Upload Results</button>
+        </form>
+        <p id="uploadedResultsPath" style="color: green;"></p>
+    </div>
+
+    <div id="fastScanSection" style="display:none;">
+        <form id="fastScanForm">
+            <h3>Directory path to scan:</h3>
+            <input type="text" id="fastScanDirectoryPath" placeholder="/Path/To/Directory" maxlength="100" required>
+            <h3>Include subfolders?</h3>
+            <input type="checkbox" id="fastScanSubfolders">
+            <button type="submit">Scan</button>
+        </form>
+    </div>
+
+    <h4 id="resultsHeader" style="display:none;">Scan Results</h4>
+    <h3 id="resultsFileName" style="display:none; font-weight: bold;"></h3>
+    <h3 id="associatedIocFileName" style="display:none; font-weight: bold;"></h3>
+
+    <!-- Results Table -->
+    <table id="resultsTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>File Path</th>
+                <th>File Name</th>
+                <th>File Size (Bytes)</th>
+                <th>MD5 Hash</th>
+                <th>SHA1 Hash</th>
+                <th>SHA256 Hash</th>
+                <th>Matched Strings</th>
+                <th>Matched IOC Types</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Results will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        let iocFilePath = "";
+
+
+        document.getElementById("iocUploadForm").onsubmit = async function(event) {
+            event.preventDefault();
+            let file = document.getElementById("iocFileInput").files[0];
+            let formData = new FormData();
+            formData.append("file", file);
+
+            let response = await fetch("/upload", { method: "POST", body: formData });
+            let data = await response.json();
+
+            if (data.file_path) {
+                iocFilePath = data.file_path;
+                document.getElementById("iocFilePath").textContent = "Uploaded IOC file: " + iocFilePath;
+            }
+
+            alert(data.message || data.error);
+        };
+
+
+        document.getElementById("scanForm").onsubmit = async function(event) {
+            event.preventDefault();
+
+            if (!iocFilePath) {
+                alert("Please upload an IOC file first!");
+                return;
+            }
+
+            let directory = document.getElementById("directoryPath").value;
+            let subfolders = document.getElementById("subfolders").checked;
+
+            let response = await fetch("/scan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "ioc_file": iocFilePath,
+                    "directory": directory,
+                    "check_subfolders": subfolders,
+                    "ioc_filename": iocFilePath
+                })
+            });
+
+            let data = await response.json();
+
+            displayResults(data.results);
+
+            // Display the filename of the results under the "Scan Results" text
+            const resultsFileName = document.getElementById("resultsFileName");
+            resultsFileName.textContent = `Scan results for: ${data.filename}`;
+            resultsFileName.style.display = 'block';
+
+            // Display the associated IOC file name
+            const associatedIocFileName = document.getElementById("associatedIocFileName");
+            associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
+            associatedIocFileName.style.display = 'block';
+
+            await fetchFiles()
+        };
+
+
+        document.getElementById("uploadResultsForm").onsubmit = async function(event) {
+            event.preventDefault();
+            let file = document.getElementById("scanResultsInput").files[0];
+            let formData = new FormData();
+            formData.append("file", file);
+
+            let response = await fetch("/upload_scan_results", { method: "POST", body: formData });
+            let data = await response.json();
+
+            if (data.file_path) {
+                document.getElementById("uploadedResultsPath").textContent = "Uploaded scan results file: " + data.file_path;
+            }
+
+            if (data.results) {
+                displayResults(data.results);
+            }
+
+            alert(data.message || data.error);
+        };
+
+
+        document.getElementById("fastScanForm").onsubmit = async function(event) {
+            event.preventDefault();
+
+            let directory = document.getElementById("fastScanDirectoryPath").value;
+            let subfolders = document.getElementById("fastScanSubfolders").checked;
+
+            let response = await fetch("/fast_scan", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "directory": directory,
+                    "check_subfolders": subfolders
+                })
+            });
+
+            let data = await response.json();
+
+            displayResults(data.results);
+
+            // Display the filename of the results under the "Scan Results" text
+            const resultsFileName = document.getElementById("resultsFileName");
+            resultsFileName.textContent = `Scan results for: ${data.filename}`;
+            resultsFileName.style.display = 'block';
+
+            // Display the associated IOC file name
+            const associatedIocFileName = document.getElementById("associatedIocFileName");
+            associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
+            associatedIocFileName.style.display = 'block';
+
+            await fetchFiles()
+        };
+    </script>
+</body>
+</html>

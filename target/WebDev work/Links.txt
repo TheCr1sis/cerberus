@@ -1,0 +1,4 @@
+https://www.drupal.org/docs/8/update/update-core-manually
+https://www.drupal.org/security
+https://www.drupal.org/sa-core-2019-008
+https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html

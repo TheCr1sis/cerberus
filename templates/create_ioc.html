@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create IOC File</title>
+    <meta name="author" content="Illia Bulhar">
+    <link rel="stylesheet" href="static/create-ioc-styles.css">
+</head>
+<body>
+    <h1>Create a New IOC File</h1>
+
+    <h3>IOC Filename:</h3>
+    <input type="text" id="iocFilename" maxlength="100" required><label>.json</label><br><br>
+
+    <form id="iocForm">
+
+        <div class="container">
+            <label>Filenames:</label>
+            <div id="filenames"></div>
+            <button type="button" onclick="addInputField('filenames', 'text', 100)">Add Filename</button>
+        </div>
+
+        <div class="container">
+            <label>File Sizes:</label>
+            <div id="filesizes"></div>
+            <button type="button" onclick="addInputField('filesizes', 'number', 50)">Add File Size</button>
+        </div>
+
+        <div class="container">
+            <label>MD5 Hashes:</label>
+            <div id="md5Hashes"></div>
+            <button type="button" onclick="addInputField('md5Hashes', 'text', 32)">Add MD5</button>
+        </div>
+
+        <div class="container">
+            <label>SHA-1 Hashes:</label>
+            <div id="sha1Hashes"></div>
+            <button type="button" onclick="addInputField('sha1Hashes', 'text', 40)">Add SHA-1</button>
+        </div>
+
+        <div class="container">
+            <label>SHA-256 Hashes:</label>
+            <div id="sha256Hashes"></div>
+            <button type="button" onclick="addInputField('sha256Hashes', 'text', 64)">Add SHA-256</button>
+        </div>
+
+        <div class="container">
+            <label>Strings:</label>
+            <div id="strings"></div>
+            <button type="button" onclick="addInputField('strings', 'text', 500)">Add String</button>
+        </div>
+
+        <br>
+
+        <div class="button-container">
+            <button id="exit-btn" type="button" onclick="window.location.href='/'">Exit</button>
+            <button id="save-btn" type="submit">Save</button>
+        </div>
+    </form>
+
+    <script>
+        function addInputField(containerId, type = 'text', maxLength = null) {
+            let container = document.getElementById(containerId);
+            let div = document.createElement("div");
+            div.classList.add("input-group");
+
+            let input = document.createElement("input");
+            input.type = type;
+            input.name = containerId;
+            input.required = true;
+            if (maxLength) input.maxLength = maxLength;
+
+            let removeButton = document.createElement("span");
+            removeButton.innerHTML = "✖";
+            removeButton.classList.add("remove-btn");
+            removeButton.onclick = () => container.removeChild(div);
+
+            div.appendChild(input);
+            div.appendChild(removeButton);
+            container.appendChild(div);
+        }
+
+        document.getElementById("iocForm").onsubmit = async function(event) {
+            event.preventDefault();
+
+            let iocFilename = document.getElementById("iocFilename").value;
+
+            function getValues(containerId) {
+                return Array.from(document.getElementsByName(containerId)).map(input => input.value.trim()).filter(val => val !== "");
+            }
+
+            let iocData = {
+                filenames: getValues("filenames"),
+                filesizes: getValues("filesizes").map(size => parseInt(size)),
+                hashes: {
+                    md5: getValues("md5Hashes"),
+                    sha1: getValues("sha1Hashes"),
+                    sha256: getValues("sha256Hashes")
+                },
+                strings: getValues("strings")
+            };
+
+            let response = await fetch("/create_ioc", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "filename": iocFilename, "data": iocData })
+            });
+
+            let result = await response.json();
+            alert(result.message || result.error);
+
+            if (result.success) {
+                window.location.href = "/";
+            }
+        };
+    </script>
+</body>
+</html>

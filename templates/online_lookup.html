@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Hash Lookup</title>
+    <meta name="author" content="Illia Bulhar">
+    <link rel="stylesheet" href="static/online-lookup-styles.css">
+</head>
+<body>
+    <h1>Online Hash Lookup</h1>
+
+
+    <div id="settings-icon">&#9881;</div>
+
+    <div id="overlay" class="hidden">
+        <div id="settings-popup" class="hidden">
+            <div class="settings-content">
+                <h1>Settings</h1>
+                <label for="vt-api-key">VirusTotal API Key:</label>
+                <input type="text" id="vt-api-key" placeholder="Enter your API key" maxlength="128">
+                <br>
+
+                <label for="mb-auth-key">Malwarebazaar Auth Key:</label>
+                <input type="text" id="mb-auth-key" placeholder="Enter your auth key" maxlength="128">
+                <br>
+
+                <button id="save-settings">Save</button>
+                <button id="exit-settings">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch existing API keys from the server when the settings menu is opened
+        async function fetchApiKeys() {
+            const response = await fetch('/api/get-keys');
+            const data = await response.json();
+            document.getElementById("vt-api-key").value = data.vtApiKey;
+            document.getElementById("mb-auth-key").value = data.mbAuthKey;
+        }
+
+        document.getElementById("settings-icon").addEventListener("click", function () {
+            document.getElementById("settings-popup").classList.toggle("active");
+            document.getElementById("overlay").classList.toggle("active");
+
+            fetchApiKeys();
+        });
+
+        document.getElementById("exit-settings").addEventListener("click", function () {
+            document.getElementById("settings-popup").classList.remove("active");
+            document.getElementById("overlay").classList.remove("active");
+        });
+
+        document.getElementById("save-settings").addEventListener("click", async function () {
+            const vtApiKey = document.getElementById("vt-api-key").value;
+            const mbAuthKey = document.getElementById("mb-auth-key").value;
+
+            // Send the new API keys to the backend
+            const response = await fetch("/api/save-keys", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ vtApiKey, mbAuthKey })
+            });
+
+            const data = await response.json();
+            alert(data.message);
+            document.getElementById("settings-popup").classList.remove("active");
+            document.getElementById("overlay").classList.remove("active");
+        });
+    </script>
+
+
+    <div class="center-container">
+        <input type="text" id="hash-input" placeholder="Enter MD5 or SHA256 hash" maxlength="64">
+
+        <div>
+            <h3><input type="checkbox" id="virustotal-checkbox" value="virustotal"> VirusTotal</h3>
+            <h3><input type="checkbox" id="malwarebazaar-checkbox" value="malwarebazaar"> MalwareBazaar</h3>
+        </div>
+
+        <button id="submit-btn">Submit</button>
+    </div>
+
+
+    <!-- Results Table -->
+    <div id="resultsTable" style="display:none;">
+        <h1>Scan Results</h1>
+        <p id="scan-source"></p>
+        <table>
+            <tbody id="resultsBody">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+        document.getElementById("submit-btn").addEventListener("click", function() {
+            const hashInput = document.getElementById("hash-input").value.trim();
+            const virustotalChecked = document.getElementById("virustotal-checkbox").checked;
+            const malwarebazaarChecked = document.getElementById("malwarebazaar-checkbox").checked;
+
+            if (!hashInput) {
+                alert("Please enter a hash.");
+                return;
+            }
+
+            const selectedServices = [];
+            if (virustotalChecked) selectedServices.push("virustotal");
+            if (malwarebazaarChecked) selectedServices.push("malwarebazaar");
+
+            if (selectedServices.length === 0) {
+                alert("Please select at least one service.");
+                return;
+            }
+
+            fetch("/api_lookup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "hash": hashInput,
+                    "services": selectedServices
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+
+
+        function displayResults(data) {
+            if (!data || (!data.virustotal && !data.malwarebazaar)) {
+                alert("No data found.");
+                return;
+            }
+
+            const resultsTable = document.getElementById("resultsTable");
+            const resultsBody = document.getElementById("resultsBody");
+
+            // Clear previous results
+            resultsBody.innerHTML = "";
+
+            // Process VirusTotal results
+            if (data.virustotal) {
+                const vtResults = data.virustotal.data[0];
+                const vtFields = {
+                    "File Name": vtResults.file_name || "N/A",
+                    "File Size": vtResults.file_size + " bytes" || "N/A",
+                    "MD5 Hash": vtResults.md5_hash || "N/A",
+                    "SHA1 Hash": vtResults.sha1_hash || "N/A",
+                    "SHA256 Hash": vtResults.sha256_hash || "N/A",
+                    "Signature": vtResults.signature || "N/A",
+                    "First Seen": vtResults.first_seen || "N/A",
+                    "Last Seen": vtResults.last_seen || "N/A",
+                    "File Type": vtResults.file_type || "N/A",
+                    "Delivery Method": vtResults.delivery_method || "N/A",
+                    "Comment": vtResults.comment || "N/A",
+                    "TrID": vtResults.trid ? vtResults.trid.join(", ") : "N/A",
+                    "Reporter": vtResults.reporter || "N/A",
+                    "Tags": vtResults.tags ? vtResults.tags.join(", ") : "N/A"
+                };
+
+                // Populate VirusTotal results into the table
+                for (const [key, value] of Object.entries(vtFields)) {
+                    let row = document.createElement("tr");
+                    let keyCell = document.createElement("td");
+                    keyCell.style.fontWeight = "bold";
+                    keyCell.textContent = key + ":";
+
+                    let valueCell = document.createElement("td");
+                    valueCell.textContent = value;
+
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+                    resultsBody.appendChild(row);
+                }
+            }
+
+            // Process MalwareBazaar results
+            if (data.malwarebazaar) {
+                const mbResults = data.malwarebazaar.data[0];
+                const mbFields = {
+                    "File Name": mbResults.file_name || "N/A",
+                    "File Size": mbResults.file_size + " bytes" || "N/A",
+                    "MD5 Hash": mbResults.md5_hash || "N/A",
+                    "SHA1 Hash": mbResults.sha1_hash || "N/A",
+                    "SHA256 Hash": mbResults.sha256_hash || "N/A",
+                    "Signature": mbResults.signature || "N/A",
+                    "First Seen": mbResults.first_seen || "N/A",
+                    "Last Seen": mbResults.last_seen || "N/A",
+                    "File Type": mbResults.file_type || "N/A",
+                    "MIME Type": mbResults.file_type_mime || "N/A",
+                    "Delivery Method": mbResults.delivery_method || "N/A",
+                    "Comment": mbResults.comment || "N/A",
+                    "TrID": mbResults.trid ? mbResults.trid.join(", ") : "N/A",
+                    "Origin Country": mbResults.origin_country || "N/A",
+                    "Reporter": mbResults.reporter || "N/A",
+                    "Tags": mbResults.tags ? mbResults.tags.join(", ") : "N/A"
+                };
+
+                // Populate MalwareBazaar results into the table
+                for (const [key, value] of Object.entries(mbFields)) {
+                    let row = document.createElement("tr");
+                    let keyCell = document.createElement("td");
+                    keyCell.style.fontWeight = "bold";
+                    keyCell.textContent = key + ":";
+
+                    let valueCell = document.createElement("td");
+                    valueCell.textContent = value;
+
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+                    resultsBody.appendChild(row);
+                }
+            }
+
+            // Show the results table
+            resultsTable.style.display = "block";
+        }
+    </script>
+
+
+</body>
+</html>
