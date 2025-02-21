@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 def reload_env():
     load_dotenv(dotenv_path=".env", override=True)
 
+load_dotenv()
 
 # Function to query VirusTotal
 def query_virustotal(hash_value):
