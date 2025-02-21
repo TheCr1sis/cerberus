@@ -213,6 +213,7 @@ def fast_scan_route():
 # API route for online lookup
 @app.route("/api_lookup", methods=["POST"])
 def api_lookup():
+    reload_env()
     data = request.json
     hash_value = data.get("hash")
     services = data.get("services", [])
@@ -220,14 +221,34 @@ def api_lookup():
     if not hash_value:
         return jsonify({"error": "No hash provided"}), 400
 
+    # Check if the necessary API keys are set for the selected services
+    missing_keys = []
+
+    # Check for VirusTotal API key
+    if "virustotal" in services and not os.getenv("VT_API_KEY"):
+        missing_keys.append("VirusTotal")
+
+    # Check for MalwareBazaar API key
+    if "malwarebazaar" in services and not os.getenv("MB_AUTH_KEY"):
+        missing_keys.append("MalwareBazaar")
+
+    # If any API keys are missing, return an error message
+    if missing_keys:
+        missing_keys_str = ", ".join(missing_keys)
+        return jsonify({"error": f"Missing API key(s) for: {missing_keys_str}"}), 400
+
     vt_results = None
     mb_results = None
 
     if "virustotal" in services:
         vt_results = query_virustotal(hash_value)
+        if 'error' in vt_results:
+            return jsonify({"error": "No VirusTotal data found. Check your API key."}), 400
 
     if "malwarebazaar" in services:
         mb_results = query_malwarebazaar(hash_value)
+        if 'query_status' in mb_results and mb_results['query_status'] == 'wrong_auth_key':
+            return jsonify({"error": "No MalwareBazaar data found. Check your API key."}), 400
 
     return jsonify({
         "virustotal": vt_results if vt_results else None,
@@ -254,6 +275,8 @@ def save_keys():
     # Save API keys to the .env file
     set_key(".env", "VT_API_KEY", vt_api_key)
     set_key(".env", "MB_AUTH_KEY", mb_auth_key)
+
+    reload_env()
 
     return jsonify({"message": "API keys saved successfully!"})
 

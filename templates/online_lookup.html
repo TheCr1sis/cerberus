@@ -25,8 +25,10 @@
                 <input type="text" id="mb-auth-key" placeholder="Enter your auth key" maxlength="128">
                 <br>
 
-                <button id="save-settings">Save</button>
-                <button id="exit-settings">Exit</button>
+                <div class="button-container">
+                    <button id="save-settings">Save</button>
+                    <button id="exit-settings">Exit</button>
+                </div>
             </div>
         </div>
     </div>
@@ -85,16 +87,26 @@
     </div>
 
 
-    <!-- Results Table -->
-    <div id="resultsTable" style="display:none;">
-        <h1>Scan Results</h1>
-        <p id="scan-source"></p>
+    <!-- VirusTotal Results Table -->
+    <div id="virustotal-results-table" style="display:none;">
+        <h1>VirusTotal Scan Results</h1>
         <table>
-            <tbody id="resultsBody">
+            <tbody id="virustotal-results-body">
                 <!-- Data will be inserted here -->
             </tbody>
         </table>
     </div>
+
+    <!-- MalwareBazaar Results Table -->
+    <div id="malwarebazaar-results-table" style="display:none;">
+        <h1>MalwareBazaar Scan Results</h1>
+        <table>
+            <tbody id="malwarebazaar-results-body">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
 
 
     <script>
@@ -139,38 +151,60 @@
 
 
         function displayResults(data) {
+             if (data.error) {
+                alert(data.error);
+                return;
+            }
+
             if (!data || (!data.virustotal && !data.malwarebazaar)) {
                 alert("No data found.");
                 return;
             }
 
-            const resultsTable = document.getElementById("resultsTable");
-            const resultsBody = document.getElementById("resultsBody");
+            const virustotalResultsTable = document.getElementById("virustotal-results-table");
+            const malwarebazaarResultsTable = document.getElementById("malwarebazaar-results-table");
 
             // Clear previous results
-            resultsBody.innerHTML = "";
+            document.getElementById("virustotal-results-body").innerHTML = "";
+            document.getElementById("malwarebazaar-results-body").innerHTML = "";
 
             // Process VirusTotal results
             if (data.virustotal) {
-                const vtResults = data.virustotal.data[0];
+                virustotalResultsTable.style.display = "block";
+                const vtResults = data.virustotal.data.attributes;
                 const vtFields = {
-                    "File Name": vtResults.file_name || "N/A",
-                    "File Size": vtResults.file_size + " bytes" || "N/A",
-                    "MD5 Hash": vtResults.md5_hash || "N/A",
-                    "SHA1 Hash": vtResults.sha1_hash || "N/A",
-                    "SHA256 Hash": vtResults.sha256_hash || "N/A",
-                    "Signature": vtResults.signature || "N/A",
-                    "First Seen": vtResults.first_seen || "N/A",
-                    "Last Seen": vtResults.last_seen || "N/A",
-                    "File Type": vtResults.file_type || "N/A",
-                    "Delivery Method": vtResults.delivery_method || "N/A",
-                    "Comment": vtResults.comment || "N/A",
-                    "TrID": vtResults.trid ? vtResults.trid.join(", ") : "N/A",
-                    "Reporter": vtResults.reporter || "N/A",
-                    "Tags": vtResults.tags ? vtResults.tags.join(", ") : "N/A"
+                    "File Size": vtResults.size + " bytes" || "N/A",
+                    "MD5 Hash": vtResults.md5 || "N/A",
+                    "SHA1 Hash": vtResults.sha1 || "N/A",
+                    "SHA256 Hash": vtResults.sha256 || "N/A",
+                    "First Submission Date": vtResults.first_submission_date ? new Date(vtResults.first_submission_date * 1000).toLocaleString() : "N/A",
+                    "Last Analysis Date": vtResults.last_analysis_date ? new Date(vtResults.last_analysis_date * 1000).toLocaleString() : "N/A",
+                    "File Type": vtResults.type_description || "N/A",
+                    "Detection Ratio": vtResults.last_analysis_stats
+                        ? `${vtResults.last_analysis_stats.malicious}/${Object.values(vtResults.last_analysis_stats).reduce((a, b) => a + b, 0)} detected as malicious`
+                        : "N/A",
+                    "File Reputation Score": vtResults.last_analysis_stats
+                        ? `Malicious: ${vtResults.last_analysis_stats.malicious}, Suspicious: ${vtResults.last_analysis_stats.suspicious}, Harmless: ${vtResults.last_analysis_stats.harmless}`
+                        : "N/A",
+                    "Known Aliases": vtResults.names.join(", ") || "N/A",
+                    "File Tags": vtResults.tags ? vtResults.tags.join(", ") : "N/A",
+                    "Signer": vtResults.signature_info && vtResults.signature_info.signers
+                        ? vtResults.signature_info.signers
+                        : "N/A",
+                    "Signature Verification": vtResults.signature_info && vtResults.signature_info.verified
+                        ? vtResults.signature_info.verified
+                        : "N/A",
+                    "Submission Count": vtResults.times_submitted ? `${vtResults.times_submitted} times` : "N/A",
+                    "Imported Libraries": vtResults.pe_info && vtResults.pe_info.import_list
+                        ? vtResults.pe_info.import_list.map(lib => lib.library_name).join(", ")
+                        : "N/A",
+                    "Suggested Threat Label": vtResults.popular_threat_classification && vtResults.popular_threat_classification.suggested_threat_label
+                        ? vtResults.popular_threat_classification.suggested_threat_label
+                        : "N/A",
                 };
 
                 // Populate VirusTotal results into the table
+                const vtResultsBody = document.getElementById("virustotal-results-body");
                 for (const [key, value] of Object.entries(vtFields)) {
                     let row = document.createElement("tr");
                     let keyCell = document.createElement("td");
@@ -182,12 +216,15 @@
 
                     row.appendChild(keyCell);
                     row.appendChild(valueCell);
-                    resultsBody.appendChild(row);
+                    vtResultsBody.appendChild(row);
                 }
+            } else {
+                virustotalResultsTable.style.display = "none";
             }
 
             // Process MalwareBazaar results
             if (data.malwarebazaar) {
+                malwarebazaarResultsTable.style.display = "block";
                 const mbResults = data.malwarebazaar.data[0];
                 const mbFields = {
                     "File Name": mbResults.file_name || "N/A",
@@ -209,6 +246,7 @@
                 };
 
                 // Populate MalwareBazaar results into the table
+                const mbResultsBody = document.getElementById("malwarebazaar-results-body");
                 for (const [key, value] of Object.entries(mbFields)) {
                     let row = document.createElement("tr");
                     let keyCell = document.createElement("td");
@@ -220,12 +258,11 @@
 
                     row.appendChild(keyCell);
                     row.appendChild(valueCell);
-                    resultsBody.appendChild(row);
+                    mbResultsBody.appendChild(row);
                 }
+            } else {
+                malwarebazaarResultsTable.style.display = "none";
             }
-
-            // Show the results table
-            resultsTable.style.display = "block";
         }
     </script>
 

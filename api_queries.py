@@ -8,21 +8,10 @@ def reload_env():
     load_dotenv(dotenv_path=".env", override=True)
 
 
-# Load environment variables (API keys)
-load_dotenv()
-
-
-# Load API keys provided by user
-API_KEYS = {
-    "virustotal": os.getenv("VT_API_KEY"),
-    "malwarebazaar": os.getenv("MB_AUTH_KEY")
-}
-
-
 # Function to query VirusTotal
 def query_virustotal(hash_value):
     reload_env()
-    api_key = API_KEYS.get("virustotal")
+    api_key = os.getenv("VT_API_KEY")
 
     if not api_key:
         return {"error": "VirusTotal API key not set"}
@@ -41,7 +30,7 @@ def query_virustotal(hash_value):
 # Function to query MalwareBazaar by hash
 def query_malwarebazaar(hash_value):
     reload_env()
-    api_key = API_KEYS.get("malwarebazaar")
+    api_key = os.getenv("MB_AUTH_KEY")
 
     if not api_key:
         return {"error": "MalwareBazaar API key not set"}

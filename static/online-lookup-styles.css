@@ -121,6 +121,7 @@ button {
     color: white;
     border: none;
     margin-top: 5px;
+    margin-bottom: 40px;
     padding: 10px 15px;
     border-radius: 10px;
     cursor: pointer;
@@ -177,18 +178,6 @@ button:active {
     cursor: pointer;
     border-radius: 10px;
     margin: 0;
-}
-
-/* Exit button styling */
-#exit-btn {
-    background-color: red;
-    color: white;
-}
-
-/* Save button styling */
-#save-btn {
-    background-color: green;
-    color: white;
 }
 
 /* Hover Effects */
@@ -255,8 +244,8 @@ input[type="checkbox"]:hover {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Layer above the overlay */
-    display: none; /* Hidden by default */
+    z-index: 1000;
+    display: none;
 }
 
 /* Show overlay when the settings window is active */
@@ -293,10 +282,13 @@ th {
     border: 1px solid #ddd;
 }
 
-/* Table Row and Cell Styling */
+/* Table Data Formatting */
 td {
-    padding: 10px;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
     border: 1px solid #ddd;
+    width: 100px;
 }
 
 /* Zebra Striping */
@@ -309,3 +301,12 @@ tr:hover {
     background-color: #e0e0e0;
 }
 
+#scan-source {
+    font-size: 26px;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    text-align: left;
+    width: 100%;
+}
