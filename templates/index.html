@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IOC Scanner</title>
     <meta name="author" content="Illia Bulhar">
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="static/css/styles.css">
     <script>
         function toggleScanOptions(option) {
             document.getElementById("newScanSection").style.display = option === 'new' ? 'block' : 'none';
@@ -88,16 +88,42 @@
                     alert("Error loading results: " + error);
                 });
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const darkModeToggle = document.getElementById("darkModeToggle");
+            const darkModeIcon = document.getElementById("darkModeIcon");
+
+            // Check if dark mode was previously enabled
+            if (localStorage.getItem("darkMode") === "enabled") {
+                document.body.classList.add("dark-mode");
+                darkModeIcon.textContent = "☀️"; // Change icon to sun
+            }
+
+            darkModeToggle.addEventListener("click", function () {
+                document.body.classList.toggle("dark-mode");
+
+                if (document.body.classList.contains("dark-mode")) {
+                    darkModeIcon.textContent = "☀️"; // Change to sun icon
+                    localStorage.setItem("darkMode", "enabled"); // Save state
+                } else {
+                    darkModeIcon.textContent = "🌙"; // Change to moon icon
+                    localStorage.setItem("darkMode", "disabled"); // Save state
+                }
+            });
+        });
     </script>
 </head>
 <body>
+    <div id="darkModeToggle">
+        <span id="darkModeIcon">🌙</span>
+    </div>
     <div class="file-lists">
         <div class="file-box">
-            <h3>IOC Files</h3>
+            <h5>IOC Files</h5>
             <ul id="iocFilesList"></ul>
         </div>
         <div class="file-box">
-            <h3>Results Files</h3>
+            <h5>Results Files</h5>
             <ul id="resultsFilesList"></ul>
         </div>
     </div>

@@ -310,3 +310,86 @@ tr:hover {
     text-align: left;
     width: 100%;
 }
+
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+/* Dark Mode Toggle Button */
+#darkModeToggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+/* For the ".json" text next to the input */
+.dark-mode #iocFilename + label {
+    color: white;
+}
+
+/* For the label "IOC Filename:" */
+.dark-mode h3 {
+    color: white;
+}
+
+/* For the title "Create a New IOC File" */
+.dark-mode h1 {
+    color: white;
+}
+
+/* Dark Mode Text Input Text Color */
+.dark-mode input[type="text"] {
+    color: black;
+}
+
+.dark-mode table {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+/* Table Row Zebra Striping */
+.dark-mode table tr:nth-child(odd) {
+    background-color: #2a2a2a;
+}
+
+.dark-mode table tr:nth-child(even) {
+    background-color: #333333;
+}
+
+/* Table Header Styling */
+.dark-mode th {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Table Row and Cell Styling */
+.dark-mode td {
+    padding: 10px;
+    border: 1px solid #444444;
+}
+
+/* Dark Mode Table Row Hover Effect */
+.dark-mode tr:hover {
+    background-color: #444444;
+}
+
+.dark-mode tr:nth-child(odd):hover {
+    background-color: #555555;
+}
+
+.dark-mode tr:nth-child(even):hover {
+    background-color: #666666;
+}
+
+.dark-mode input {
+    background-color: #f0f0f0;
+    color: inherit;
+    border: 1px solid #ccc;
+}
