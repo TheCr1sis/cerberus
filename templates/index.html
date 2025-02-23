@@ -8,10 +8,32 @@
     <link rel="stylesheet" href="static/css/styles.css">
     <script>
         function toggleScanOptions(option) {
-            document.getElementById("newScanSection").style.display = option === 'new' ? 'block' : 'none';
-            document.getElementById("uploadResultsSection").style.display = option === 'upload' ? 'block' : 'none';
-            document.getElementById("fastScanSection").style.display = option === 'fast' ? 'block' : 'none';
+            let sectionId = "";
+
+            // Map the button option to the correct section ID
+            if (option === "new") {
+                sectionId = "newScanSection";
+            } else if (option === "upload") {
+                sectionId = "uploadResultsSection";
+            } else if (option === "fast") {
+                sectionId = "fastScanSection";
+            }
+
+            const section = document.getElementById(sectionId);
+
+            if (!section) return;
+
+            if (section.style.display === "none" || section.style.display === "") {
+                document.getElementById("newScanSection").style.display = "none";
+                document.getElementById("uploadResultsSection").style.display = "none";
+                document.getElementById("fastScanSection").style.display = "none";
+
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
         }
+
 
         function displayResults(results) {
             const table = document.getElementById("resultsTable");
@@ -61,7 +83,7 @@
             window.open(url, '_blank');
         }
 
-        // Function to load results to a results table from results file
+        // Function to load data to a results table from results file
         function loadResultsFile(filename) {
             fetch(`/load_results/${filename}`)
                 .then(response => response.json())
@@ -96,18 +118,18 @@
             // Check if dark mode was previously enabled
             if (localStorage.getItem("darkMode") === "enabled") {
                 document.body.classList.add("dark-mode");
-                darkModeIcon.textContent = "☀️"; // Change icon to sun
+                darkModeIcon.textContent = "☀️";
             }
 
             darkModeToggle.addEventListener("click", function () {
                 document.body.classList.toggle("dark-mode");
 
                 if (document.body.classList.contains("dark-mode")) {
-                    darkModeIcon.textContent = "☀️"; // Change to sun icon
-                    localStorage.setItem("darkMode", "enabled"); // Save state
+                    darkModeIcon.textContent = "☀️";
+                    localStorage.setItem("darkMode", "enabled");
                 } else {
-                    darkModeIcon.textContent = "🌙"; // Change to moon icon
-                    localStorage.setItem("darkMode", "disabled"); // Save state
+                    darkModeIcon.textContent = "🌙";
+                    localStorage.setItem("darkMode", "disabled");
                 }
             });
         });
