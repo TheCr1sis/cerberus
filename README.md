@@ -1,13 +1,13 @@
-# IOC-Checker
+# IOC Scanner
 
 ## 📌 Project Description
-**IOC-Checker** is a Python-based tool designed to scan directories for files matching predefined Indicators of Compromise (IOCs). It allows to create or load an IOC file containing filenames, file sizes, hashes (MD5, SHA1, SHA256), and specific strings to detect malicious or suspicious files within a given directory and subdirectories.
+**IOC Scanner** is a Python-based tool designed to scan directories for files matching predefined Indicators of Compromise (IOCs). It allows users to create or load an IOC file containing filenames, file sizes, hashes (MD5, SHA1, SHA256), and specific strings to detect malicious or suspicious files within a given directory and subdirectories.
 
 ## Features
 - Create or load an IOC file in JSON format.
 - Scan directories and subdirectories for matching IOCs.
-- Conduct a fast scan with premade IOC files
-- Query file information directly from VirusTotal and MalwareBazaar
+- Conduct a fast scan with premade IOC files.
+- Query file information directly from VirusTotal and MalwareBazaar.
 - Identify files based on:
   - Filenames
   - File sizes
@@ -17,19 +17,49 @@
 
 ## Installation
 
+To install and set up **IOC Scanner**, follow these steps:
+
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/TheCr1sis/ioc_scanner.git
+   cd ioc_scanner
+   ```
+
+2. **Set up a virtual environment (optional but recommended)**  
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**  
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Usage
 
+To start the **IOC Scanner** web application, run the following command:
+
+```bash
+python main.py
+```
+
+This will start a local web server on **http://127.0.0.1:5555/**. Open your browser and navigate to this address to access the tool.
+
+### Available Functionalities:
+- **Create IOC File:** Create a new IOC file with your custom IOCs.
+- **Manual Scan:** Upload an IOC file and specify a directory for scanning.
+- **Fast Scan:** Quickly scan using preloaded IOC files.
+- **Upload Scan Results:** Load previously scanned results.
+- **Online Lookup:** Check file details against online malware databases (VirusTotal & MalwareBazaar).
 
 ## Testing
 
-A testing folder **target** is included in this repository, containing various files and subdirectories that you can use to test the IOC-Checker's functionality. You can specify the testing folder as the scan directory when prompted.
-
-### Example Run
-
+A testing folder **target** is included in this repository, containing various files and subdirectories that you can use to test the IOC Scanner's functionality. You can specify the testing folder as the scan directory when prompted.
 
 ## JSON Output Format
-The tool generates a JSON reports containing details of matched files. Example output:
+The tool generates a JSON report containing details of matched files. Example output:
+
 ```json
 [
   {
@@ -45,3 +75,4 @@ The tool generates a JSON reports containing details of matched files. Example o
   }
 ]
 ```
+
