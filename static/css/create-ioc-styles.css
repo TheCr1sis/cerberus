@@ -265,6 +265,11 @@ button:active {
     color: black;
 }
 
+/* Dark Mode Number Input Text Color */
+.dark-mode input[type="number"] {
+    color: black;
+}
+
 .dark-mode table {
     background-color: #1e1e1e;
     color: #ffffff;
