@@ -198,14 +198,15 @@
             // Process VirusTotal results
             if (data.virustotal) {
                 virustotalResultsTable.style.display = "block";
-                const vtResults = data.virustotal.data.attributes;
+                const vtResults = data.virustotal.file_info.data.attributes;
+                const vtResultsBehavior = data.virustotal.behavior.data;
                 const vtFields = {
                     "File Size": vtResults.size + " bytes" || "N/A",
                     "MD5 Hash": vtResults.md5 || "N/A",
                     "SHA1 Hash": vtResults.sha1 || "N/A",
                     "SHA256 Hash": vtResults.sha256 || "N/A",
-                    "First Submission Date": vtResults.first_submission_date ? new Date(vtResults.first_submission_date * 1000).toLocaleString() : "N/A",
-                    "Last Analysis Date": vtResults.last_analysis_date ? new Date(vtResults.last_analysis_date * 1000).toLocaleString() : "N/A",
+                    "First Submission Date": vtResults.first_submission_date ? new Date(vtResults.first_submission_date * 1000).toISOString().replace("T", " ").replace(".000Z", " UTC") : "N/A",
+                    "Last Analysis Date": vtResults.last_analysis_date ? new Date(vtResults.last_analysis_date * 1000).toISOString().replace("T", " ").replace(".000Z", " UTC") : "N/A",
                     "File Type": vtResults.type_description || "N/A",
                     "Detection Ratio": vtResults.last_analysis_stats
                         ? `${vtResults.last_analysis_stats.malicious}/${Object.values(vtResults.last_analysis_stats).reduce((a, b) => a + b, 0)} detected as malicious`
@@ -227,6 +228,12 @@
                         : "N/A",
                     "Suggested Threat Label": vtResults.popular_threat_classification && vtResults.popular_threat_classification.suggested_threat_label
                         ? vtResults.popular_threat_classification.suggested_threat_label
+                        : "N/A",
+                    "IP Traffic": vtResultsBehavior && vtResultsBehavior.length > 0
+                        ? [...new Set(vtResultsBehavior.flatMap(entry => entry.attributes.ip_traffic ? entry.attributes.ip_traffic.map(ip => `${ip.destination_ip}:${ip.destination_port}`): []))].join(", ") || "N/A"
+                        : "N/A",
+                    "DNS Resolutions": vtResultsBehavior && vtResultsBehavior.length > 0
+                        ? [...new Set(vtResultsBehavior.flatMap(entry => entry.attributes.dns_lookups ? entry.attributes.dns_lookups.map(ip => `${ip.hostname} - ${ip.resolved_ips}`): []))].join(", ") || "N/A"
                         : "N/A",
                 };
 
