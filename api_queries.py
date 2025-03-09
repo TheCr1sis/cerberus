@@ -17,13 +17,27 @@ def query_virustotal(hash_value):
     if not api_key:
         return {"error": "VirusTotal API key not set"}
 
-    url = f"https://www.virustotal.com/api/v3/files/{hash_value}"
+    base_url = "https://www.virustotal.com/api/v3/files"
     headers = {"x-apikey": api_key}
 
     try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()
+        # Fetch main file report
+        file_response = requests.get(f"{base_url}/{hash_value}", headers=headers)
+        file_response.raise_for_status()
+        file_data = file_response.json()
+
+        # Fetch behavior tab of virustotal analysis
+        behavior_response = requests.get(f"{base_url}/{hash_value}/behaviours", headers=headers)
+        if behavior_response.status_code == 200:
+            behavior_data = behavior_response.json()
+        else:
+            behavior_data = {"error": "No behavior analysis available"}
+
+        return {
+            "file_info": file_data,
+            "behavior": behavior_data
+        }
+
     except requests.exceptions.RequestException as e:
         return {"error": f"VirusTotal lookup failed: {str(e)}"}
 
