@@ -111,6 +111,7 @@
         </div>
 
         <button id="submit-btn">Submit</button>
+        <div id="scanSpinner" class="spinner" style="display: none;"></div>
     </div>
 
 
@@ -156,6 +157,9 @@
                 return;
             }
 
+            // Add scan spinner animation
+            document.getElementById("scanSpinner").style.display = "block";
+
             fetch("/api_lookup", {
                 method: "POST",
                 headers: {
@@ -190,6 +194,9 @@
 
             const virustotalResultsTable = document.getElementById("virustotal-results-table");
             const malwarebazaarResultsTable = document.getElementById("malwarebazaar-results-table");
+
+            // Remove scan spinner animation
+            document.getElementById("scanSpinner").style.display = "none";
 
             // Clear previous results
             document.getElementById("virustotal-results-body").innerHTML = "";
