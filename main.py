@@ -24,7 +24,7 @@ def create_env_file():
         # If the .env file doesn't exist, create it with default values
         with open(ENV_FILE, "w") as env_file:
             env_file.write("VT_API_KEY=\n")
-            env_file.write("FF_AUTH_KEY=\n")
+            env_file.write("MB_AUTH_KEY=\n")
 
 # Function to reload the .env file into the environment
 def reload_env():
