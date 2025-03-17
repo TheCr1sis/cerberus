@@ -122,11 +122,13 @@
         document.addEventListener("DOMContentLoaded", function () {
             const darkModeToggle = document.getElementById("darkModeToggle");
             const darkModeIcon = document.getElementById("darkModeIcon");
+            const spinner = document.querySelectorAll(".spinner");
 
             // Check if dark mode was previously enabled
             if (localStorage.getItem("darkMode") === "enabled") {
                 document.body.classList.add("dark-mode");
                 darkModeIcon.textContent = "☀️";
+                spinner.forEach(spinnerElement => spinnerElement.classList.add("dark-mode"));
             }
 
             darkModeToggle.addEventListener("click", function () {
@@ -135,9 +137,13 @@
                 if (document.body.classList.contains("dark-mode")) {
                     darkModeIcon.textContent = "☀️";
                     localStorage.setItem("darkMode", "enabled");
+                    spinner.forEach(spinnerElement => spinnerElement.classList.add("dark-mode"));
+                    spinner.forEach(spinnerElement => spinnerElement.classList.remove("light-mode"));
                 } else {
                     darkModeIcon.textContent = "🌙";
                     localStorage.setItem("darkMode", "disabled");
+                    spinner.forEach(spinnerElement => spinnerElement.classList.add("light-mode"));
+                    spinner.forEach(spinnerElement => spinnerElement.classList.remove("dark-mode"));
                 }
             });
         });
