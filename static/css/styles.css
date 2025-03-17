@@ -424,3 +424,28 @@ button:active {
     color: inherit;
     border: 1px solid #ccc;
 }
+
+.spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.main-buttons.active {
+    background-color: #e67e22;
+    color: white;
+    border-color: #d45d0f;
+    transition: background-color 0.3s ease;
+}

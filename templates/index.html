@@ -9,6 +9,12 @@
     <script>
         function toggleScanOptions(option) {
             let sectionId = "";
+            let buttons = document.querySelectorAll(".main-buttons");
+
+            // Remove active class from all buttons
+            buttons.forEach(button => {
+                button.classList.remove("active");
+            })
 
             // Map the button option to the correct section ID
             if (option === "new") {
@@ -29,6 +35,8 @@
                 document.getElementById("fastScanSection").style.display = "none";
 
                 section.style.display = "block";
+
+                document.querySelector(`button[onclick="toggleScanOptions('${option}')"]`).classList.add("active");
             } else {
                 section.style.display = "none";
             }
@@ -215,6 +223,7 @@
             <h3>Include subfolders?</h3>
             <input type="checkbox" id="subfolders">
             <button type="submit">Scan</button>
+            <div id="scanSpinner" class="spinner" style="display: none;"></div>
         </form>
     </div>
 
@@ -234,6 +243,7 @@
             <h3>Include subfolders?</h3>
             <input type="checkbox" id="fastScanSubfolders">
             <button type="submit">Scan</button>
+            <div id="fastScanSpinner" class="spinner" style="display: none;"></div>
         </form>
     </div>
 
@@ -293,6 +303,8 @@
             let directory = document.getElementById("directoryPath").value;
             let subfolders = document.getElementById("subfolders").checked;
 
+            document.getElementById("scanSpinner").style.display = "block";
+
             let response = await fetch("/scan", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -319,6 +331,8 @@
             associatedIocFileName.style.display = 'block';
 
             await fetchFiles()
+
+            document.getElementById("scanSpinner").style.display = "none";
         };
 
 
@@ -349,6 +363,8 @@
             let directory = document.getElementById("fastScanDirectoryPath").value;
             let subfolders = document.getElementById("fastScanSubfolders").checked;
 
+            document.getElementById("fastScanSpinner").style.display = "block";
+
             let response = await fetch("/fast_scan", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -373,6 +389,8 @@
             associatedIocFileName.style.display = 'block';
 
             await fetchFiles()
+
+            document.getElementById("fastScanSpinner").style.display = "none";
         };
     </script>
 </body>
