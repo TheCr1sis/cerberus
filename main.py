@@ -74,12 +74,16 @@ def save_ioc():
     data = request.json
     filename = data.get("filename")
     ioc_data = data.get("data")
+    filesizes = ioc_data.get("filesizes", [])
 
     if not filename:
         return jsonify({"error": "Enter IOC file name"}), 400
 
     if not ioc_data:
         return jsonify({"error": "Invalid input"}), 400
+
+    if any(size <= 0 for size in filesizes):
+        return jsonify({"error": "All file sizes must be greater than 0"}), 400
 
     file_path = os.path.join(UPLOAD_FOLDER, f"{filename}.json")
     with open(file_path, "w") as f:
