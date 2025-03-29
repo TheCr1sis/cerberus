@@ -245,14 +245,17 @@ def api_lookup():
         if 'error' in vt_results and '401' in vt_results['error']:
             return jsonify({"error": "No VirusTotal data found. Check your API key."}), 400
         elif 'error' in vt_results and '404' in vt_results['error']:
-            return jsonify({"error": "No VirusTotal data found. Check your provided hash."}), 400
+            return jsonify({"error": "No VirusTotal data found. Hash not found."}), 400
 
     if "malwarebazaar" in services:
         mb_results = query_malwarebazaar(hash_value)
+        print(mb_results)
         if 'query_status' in mb_results and mb_results['query_status'] == 'wrong_auth_key':
             return jsonify({"error": "No MalwareBazaar data found. Check your API key."}), 400
         elif 'query_status' in mb_results and mb_results['query_status'] == 'illegal_hash':
             return jsonify({"error": "No MalwareBazaar data found. Check your provided hash."}), 400
+        elif 'error' in mb_results and 'Hash not found' in mb_results['error']:
+            return jsonify({"error": "No MalwareBazaar data found. Hash not found."}), 400
 
     return jsonify({
         "virustotal": vt_results if vt_results else None,
