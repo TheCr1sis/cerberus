@@ -190,21 +190,21 @@
         function displayResults(data) {
              if (data.error) {
                 alert(data.error);
+                document.getElementById("scanSpinner").style.display = "none";
                 return;
             }
 
             if (!data || (!data.virustotal && !data.malwarebazaar)) {
                 alert("No data found.");
+                document.getElementById("scanSpinner").style.display = "none";
                 return;
             }
 
             const virustotalResultsTable = document.getElementById("virustotal-results-table");
             const malwarebazaarResultsTable = document.getElementById("malwarebazaar-results-table");
 
-            // Remove scan spinner animation
             document.getElementById("scanSpinner").style.display = "none";
 
-            // Clear previous results
             document.getElementById("virustotal-results-body").innerHTML = "";
             document.getElementById("malwarebazaar-results-body").innerHTML = "";
 
