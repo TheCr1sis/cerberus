@@ -249,7 +249,6 @@ def api_lookup():
 
     if "malwarebazaar" in services:
         mb_results = query_malwarebazaar(hash_value)
-        print(mb_results)
         if 'query_status' in mb_results and mb_results['query_status'] == 'wrong_auth_key':
             return jsonify({"error": "No MalwareBazaar data found. Check your API key."}), 400
         elif 'query_status' in mb_results and mb_results['query_status'] == 'illegal_hash':
