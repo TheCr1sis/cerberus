@@ -1,6 +1,9 @@
 import os
 import json
 import hashlib
+import patoolib
+import tempfile
+import shutil
 from datetime import datetime
 
 # Load IOCs from file
@@ -28,12 +31,40 @@ def save_scan_results(results):
 
     return filename
 
+# Check if a file is an archive
+def is_archive(filepath):
+    return filepath.lower().endswith((".zip", ".rar", ".7z", ".tar", ".gz", ".bz2", ".xz"))
+
+# Extract files from archive
+def extract_archive(filepath):
+    temp_dir = tempfile.mkdtemp()
+    try:
+        patoolib.extract_archive(filepath, outdir=temp_dir, interactive=False)
+        return temp_dir
+    except patoolib.util.PatoolError as e:
+        print(f"Skipping password-protected or corrupted archive: {filepath}")
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        return None
+    except Exception as e:
+        print(f"Failed to extract {filepath}: {e}")
+        shutil.rmtree(temp_dir, ignore_errors=True)
+        return None
+
 # Scan directories for files with matching IOCs
-def scan_directory(directory, iocs, check_subfolders, ioc_filename):
+def scan_directory(directory, iocs, check_subfolders, ioc_filename, archive_path=None):
     matches = []
+
     for root, _, files in os.walk(directory):
         for filename in files:
             filepath = os.path.join(root, filename)
+
+            if is_archive(filepath):
+                extracted_dir = extract_archive(filepath)
+                if extracted_dir:
+                    matches.extend(scan_directory(extracted_dir, iocs, check_subfolders, ioc_filename, archive_path=filepath)["matches"])
+                    shutil.rmtree(extracted_dir, ignore_errors=True)
+                continue
+
             file_size = os.path.getsize(filepath)
             file_hashes = get_file_hashes(filepath)
             matched_attributes = []
@@ -57,8 +88,9 @@ def scan_directory(directory, iocs, check_subfolders, ioc_filename):
                 pass
 
             if matched_attributes or matched_strings:
+                display_path = os.path.join(archive_path, filename) if archive_path else filepath
                 match_entry = {
-                    "filepath": filepath,
+                    "filepath": display_path,
                     "filename": filename,
                     "size": file_size,
                     "hashes": file_hashes,
