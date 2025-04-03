@@ -100,14 +100,14 @@ input[type="text"] {
 
 /* Focused state */
 input[type="text"]:focus {
-    border-color: #3498db;
+    border-color: #4a6fa5;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     outline: none;
 }
 
 /* Hover state */
 input[type="text"]:hover {
-    border-color: #2980b9;
+    border-color: #4a6fa5;
 }
 
 /* Optional: Styling the placeholder text */
@@ -133,19 +133,19 @@ input[type="number"] {
 
 /* Focused state */
 input[type="number"]:focus {
-    border-color: #3498db;
+    border-color: #3a5a8f;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     outline: none;
 }
 
 /* Hover state */
 input[type="number"]:hover {
-    border-color: #2980b9;
+    border-color: #3a5a8f;
 }
 
 /* Regular button styles */
 button {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     border: none;
     margin-top: 5px;
@@ -162,7 +162,7 @@ button {
 
 /* Hover state with transform effect */
 button:hover {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
 }
 
 /* Focused state */
@@ -173,7 +173,7 @@ button:focus {
 
 /* Active state */
 button:active {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
     transform: translateY(1px);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -265,7 +265,7 @@ button:active {
     color: black;
 }
 
-/* Dark Mode Number Input Text Color */
+/* Dark Mode Text Input Text Color */
 .dark-mode input[type="number"] {
     color: black;
 }
@@ -286,7 +286,7 @@ button:active {
 
 /* Table Header Styling */
 .dark-mode th {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
 }
 

@@ -99,14 +99,14 @@ input[type="text"] {
 
 /* Focused state */
 input[type="text"]:focus {
-    border-color: #3498db;
+    border-color: #4a6fa5;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     outline: none;
 }
 
 /* Hover state */
 input[type="text"]:hover {
-    border-color: #2980b9;
+    border-color: #3a5a8f;
 }
 
 /* Optional: Styling the placeholder text */
@@ -117,7 +117,7 @@ input[type="text"]::placeholder {
 
 /* Regular button styles */
 button {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     border: none;
     margin-top: 5px;
@@ -135,7 +135,7 @@ button {
 
 /* Hover state with transform effect */
 button:hover {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
 }
 
 /* Focused state */
@@ -146,7 +146,7 @@ button:focus {
 
 /* Active state */
 button:active {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
     transform: translateY(1px);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -203,13 +203,13 @@ input[type="checkbox"] {
 
 /* Checkbox Checked State */
 input[type="checkbox"]:checked {
-    background-color: #3498db;
-    border-color: #2980b9;
+    background-color: #4a6fa5;
+    border-color: #3a5a8f;
 }
 
 /* Hover State */
 input[type="checkbox"]:hover {
-    border-color: #2980b9;
+    border-color: #3a5a8f;
 }
 
 /* Overlay styling */
@@ -227,8 +227,8 @@ input[type="checkbox"]:hover {
 /* Settings icon styling */
 #settings-icon {
     position: absolute;
-    top: 20px;
-    right: 30px;
+    top: 11px;
+    right: 11px;
     font-size: 40px;
     cursor: pointer;
     z-index: 1010;
@@ -275,7 +275,7 @@ table {
 
 /* Table Header Styling */
 th {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     padding: 10px;
     text-align: left;
@@ -365,7 +365,7 @@ tr:hover {
 
 /* Table Header Styling */
 .dark-mode th {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
 }
 
@@ -396,7 +396,7 @@ tr:hover {
 
 .spinner {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -409,12 +409,12 @@ tr:hover {
 
 .spinner.dark-mode {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
 }
 
 .spinner.light-mode {
     border: 6px solid #2c3e50;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
 }
 
 @keyframes spin {

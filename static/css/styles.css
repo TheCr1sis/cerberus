@@ -8,7 +8,7 @@ table {
 
 /* Table Header Styling */
 th {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     padding: 10px;
     text-align: left;
@@ -175,7 +175,7 @@ input[type="file"] {
 
 /* Hover state */
 input[type="file"]:hover {
-    border-color: #2980b9;
+    border-color: #3a5a8f;
     background-color: #f9f9f9;
 }
 
@@ -184,7 +184,7 @@ input[type="file"]::-webkit-file-upload-button {
     padding: 6px 12px;
     border: none;
     border-radius: 5px;
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     cursor: pointer;
     font-size: 14px;
@@ -193,7 +193,7 @@ input[type="file"]::-webkit-file-upload-button {
 
 /* Button hover effect */
 input[type="file"]::-webkit-file-upload-button:hover {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
 }
 
 /* Checkbox Styling */
@@ -211,13 +211,13 @@ input[type="checkbox"] {
 
 /* Checkbox Checked State */
 input[type="checkbox"]:checked {
-    background-color: #3498db;
-    border-color: #2980b9;
+    background-color: #4a6fa5;
+    border-color: #3a5a8f;
 }
 
 /* Hover State */
 input[type="checkbox"]:hover {
-    border-color: #2980b9;
+    border-color: #3a5a8f;
 }
 
 /* Text Input Styling */
@@ -235,14 +235,14 @@ input[type="text"] {
 
 /* Focused state */
 input[type="text"]:focus {
-    border-color: #3498db;
+    border-color: #4a6fa5;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     outline: none;
 }
 
 /* Hover state */
 input[type="text"]:hover {
-    border-color: #2980b9;
+    border-color: #4a6fa5;
 }
 
 /* Optional: Styling the placeholder text */
@@ -253,11 +253,11 @@ input[type="text"]::placeholder {
 
 /* Regular button styles */
 button {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
     border: none;
     padding: 10px 15px;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 15px;
     font-weight: bold;
@@ -269,7 +269,7 @@ button {
 
 /* Hover state with transform effect */
 button:hover {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
     transform: translateY(-1px);
 }
 
@@ -281,7 +281,7 @@ button:focus {
 
 /* Active state */
 button:active {
-    background-color: #2980b9;
+    background-color: #3a5a8f;
     transform: translateY(1px);
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -312,7 +312,7 @@ button:active {
     text-align: center;
     font-size: 18px;
     color: #2c3e50;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid #4a6fa5;
     padding-bottom: 5px;
     margin-bottom: 10px;
 }
@@ -396,7 +396,7 @@ button:active {
 
 /* Table Header Styling */
 .dark-mode th {
-    background-color: #3498db;
+    background-color: #4a6fa5;
     color: white;
 }
 
@@ -427,7 +427,7 @@ button:active {
 
 .spinner {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -440,12 +440,12 @@ button:active {
 
 .spinner.dark-mode {
     border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
 }
 
 .spinner.light-mode {
     border: 6px solid #2c3e50;
-    border-top: 6px solid #3498db;
+    border-top: 6px solid #4a6fa5;
 }
 
 @keyframes spin {
@@ -458,4 +458,56 @@ button:active {
     color: white;
     border-color: #d45d0f;
     transition: background-color 0.3s ease;
+}
+
+.browse-btn {
+    padding: 8px 15px;
+    background: #4a6fa5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.browse-btn:hover {
+    background: #3a5a8f;
+}
+
+.path-selector {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.path-selector input[type="text"] {
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    width: 100%;
+    max-width: 300px;
+    font-size: 14px;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.path-selector input[type="text"]:focus {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+.path-selector input[type="text"]:hover {
+    border-color: #4a6fa5;
+}
+
+.path-selector input[type="text"]::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.clear-results-container {
+    text-align: center;
+    margin-top: 15px;
 }
