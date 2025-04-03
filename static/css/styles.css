@@ -9,10 +9,38 @@ table {
 /* Table Header Styling */
 th {
     background-color: #4a6fa5;
+    position: relative;
     color: white;
     padding: 10px;
     text-align: left;
     border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+/* Table header hover effect */
+th:hover {
+    background-color: #3a5a8f;
+}
+
+th::after {
+    content: "↕";
+    color: white;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+th.asc::after {
+    content: "↑";
+    opacity: 1;
+}
+
+th.desc::after {
+    content: "↓";
+    opacity: 1;
 }
 
 /* Table Row and Cell Styling */
@@ -398,6 +426,11 @@ button:active {
 .dark-mode th {
     background-color: #4a6fa5;
     color: white;
+}
+
+/* Table header hover effect */
+.dark-mode th:hover {
+    background-color: #3a5a8f;
 }
 
 /* Table Row and Cell Styling */

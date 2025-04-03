@@ -48,6 +48,8 @@
             const tbody = table.querySelector("tbody");
             tbody.innerHTML = "";
 
+            window.currentResults = results;
+
             if (results.length === 0) {
                 const row = document.createElement("tr");
                 const cell = document.createElement("td");
@@ -80,10 +82,16 @@
                 });
             }
 
-            // Show the "Scan Results" section after results are ready
             document.getElementById("resultsHeader").style.display = 'block';
             table.style.display = 'table';
             toggleClearButton();
+
+            // Reset sorting state
+            currentSortColumn = -1;
+            sortDirection = 1;
+            document.querySelectorAll('#resultsTable th').forEach(th => {
+                th.classList.remove('asc', 'desc');
+            });
         }
 
 
@@ -104,6 +112,47 @@
             if (resultsTitle) resultsTitle.style.display = 'none';
             if (resultsFileName) resultsFileName.style.display = 'none';
             if (associatedIocFileName) associatedIocFileName.style.display = 'none';
+        }
+
+
+        // Results table sorting functionality
+        let currentSortColumn = -1;
+        let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        // Function to sort the results table
+        function sortTable(columnIndex) {
+            const table = document.getElementById('resultsTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.rows);
+            const headers = table.querySelectorAll('th');
+
+            headers.forEach(header => {
+                header.classList.remove('asc', 'desc');
+            });
+
+            if (currentSortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                currentSortColumn = columnIndex;
+                sortDirection = 1;
+            }
+
+            headers[columnIndex].classList.add(sortDirection === 1 ? 'asc' : 'desc');
+
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].textContent;
+                const cellB = rowB.cells[columnIndex].textContent;
+
+                if (columnIndex === 2) {
+                    const numA = parseInt(cellA) || 0;
+                    const numB = parseInt(cellB) || 0;
+                    return (numA - numB) * sortDirection;
+                }
+
+                return cellA.localeCompare(cellB) * sortDirection;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
         }
 
 
@@ -141,6 +190,8 @@
                 });
         }
 
+
+        // Dark mode functionality
         document.addEventListener("DOMContentLoaded", function () {
             const darkModeToggle = document.getElementById("darkModeToggle");
             const darkModeIcon = document.getElementById("darkModeIcon");
@@ -293,14 +344,14 @@
     <table id="resultsTable" style="display:none;">
         <thead>
             <tr>
-                <th>File Path</th>
-                <th>File Name</th>
-                <th>File Size (Bytes)</th>
-                <th>MD5 Hash</th>
-                <th>SHA1 Hash</th>
-                <th>SHA256 Hash</th>
-                <th>Matched Strings</th>
-                <th>Matched IOC Types</th>
+                <th onclick="sortTable(0)">File Path</th>
+                <th onclick="sortTable(1)">File Name</th>
+                <th onclick="sortTable(2)">File Size (Bytes)</th>
+                <th onclick="sortTable(3)">MD5 Hash</th>
+                <th onclick="sortTable(4)">SHA1 Hash</th>
+                <th onclick="sortTable(5)">SHA256 Hash</th>
+                <th onclick="sortTable(6)">Matched Strings</th>
+                <th onclick="sortTable(7)">Matched IOC Types</th>
             </tr>
         </thead>
         <tbody>
