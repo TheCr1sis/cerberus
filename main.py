@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, jsonify
 import os
 import json
+import platform
+import subprocess
+import tkinter as tk
+from tkinter import filedialog
 from scanner import load_iocs, scan_directory
 from fast_scan import fast_scan
 from dotenv import load_dotenv, set_key
 from api_queries import query_virustotal, query_malwarebazaar
+
 
 app = Flask(__name__)
 
@@ -18,10 +23,42 @@ os.makedirs(RESULTS_FOLDER, exist_ok=True)
 os.makedirs(FAST_SCAN_FOLDER, exist_ok=True)
 
 
+# Get directory listings on mac
+def get_mac_directory():
+    script = """
+    tell application "System Events"
+        activate
+        set folderPath to (choose folder with prompt "Select directory to scan")
+        POSIX path of folderPath
+    end tell
+    """
+    process = subprocess.Popen(['osascript', '-e', script],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+    stdout, _ = process.communicate()
+    return stdout.decode('utf-8').strip()
+
+# Get directory listings on linux
+def get_linux_directory():
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        return filedialog.askdirectory()
+    except:
+        return ""
+
+# Get directory listings on windows
+def get_windows_directory():
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        return filedialog.askdirectory()
+    except:
+        return ""
+
 # Function to create .env file with default values if it doesn't exist
 def create_env_file():
     if not os.path.exists(ENV_FILE):
-        # If the .env file doesn't exist, create it with default values
         with open(ENV_FILE, "w") as env_file:
             env_file.write("VT_API_KEY=\n")
             env_file.write("MB_AUTH_KEY=\n")
@@ -68,6 +105,26 @@ def upload_ioc():
     return jsonify({"message": "File uploaded successfully", "file_path": file_path})
 
 
+# Route for handling dynamic scan directory selection
+@app.route('/select_directory', methods=['GET'])
+def select_directory():
+    system = platform.system()
+    path = ""
+
+    try:
+        if system == "Darwin":
+            path = get_mac_directory()
+        elif system == "Windows":
+            path = get_windows_directory()
+        else:  # Linux
+            path = get_linux_directory()
+
+        return jsonify({'path': path if path else ''})
+    except Exception as e:
+        print(f"Error selecting directory: {e}")
+        return jsonify({'path': '', 'error': str(e)})
+
+
 # Route for creating new IOC file
 @app.route("/create_ioc", methods=["POST"])
 def save_ioc():
@@ -83,7 +140,7 @@ def save_ioc():
         return jsonify({"error": "Invalid input"}), 400
 
     if any(size <= 0 for size in filesizes):
-        return jsonify({"error": "All file sizes must be greater than 0"}), 400
+        return jsonify({"error": "File sizes must be greater than 0"}), 400
 
     file_path = os.path.join(UPLOAD_FOLDER, f"{filename}.json")
     with open(file_path, "w") as f:

@@ -83,7 +83,29 @@
             // Show the "Scan Results" section after results are ready
             document.getElementById("resultsHeader").style.display = 'block';
             table.style.display = 'table';
+            toggleClearButton();
         }
+
+
+        // Function to clear results table
+        function clearResults() {
+            const table = document.getElementById('resultsTable');
+            const tbody = table.querySelector('tbody');
+            const clearContainer = document.getElementById('clearResultsContainer');
+            const resultsTitle = document.getElementById('resultsHeader');
+            const resultsFileName = document.getElementById('resultsFileName');
+            const associatedIocFileName = document.getElementById('associatedIocFileName');
+
+            tbody.innerHTML = '';
+
+            table.style.display = 'none';
+            clearContainer.style.display = 'none';
+
+            if (resultsTitle) resultsTitle.style.display = 'none';
+            if (resultsFileName) resultsFileName.style.display = 'none';
+            if (associatedIocFileName) associatedIocFileName.style.display = 'none';
+        }
+
 
         // Function to handle IOC file click
         function viewIocFile(filename) {
@@ -205,7 +227,7 @@
     <h2><a href="/create_ioc">Create a new IOC file</a></h2>
 
     <button class="main-buttons" onclick="toggleScanOptions('new')">Manual Scan</button>
-    <button class="main-buttons" onclick="toggleScanOptions('upload')">Upload Scan Results File</button>
+    <button class="main-buttons" onclick="toggleScanOptions('upload')">Upload Scan Results</button>
     <button class="main-buttons" onclick="toggleScanOptions('fast')">Fast Scan</button>
     <button onclick="openOnlineLookup()">Online Lookup</button>
 
@@ -225,9 +247,14 @@
 
         <form id="scanForm">
             <h3>Directory path to scan:</h3>
-            <input type="text" id="directoryPath" placeholder="/Path/To/Directory" maxlength="200" required>
+            <div class="path-selector">
+                <input type="text" id="directoryPath" placeholder="C:\Path\To\Directory" required>
+                <button type="button" id="directoryBrowseButton" class="browse-btn">Choose</button>
+            </div>
+
             <h3>Include subfolders?</h3>
             <input type="checkbox" id="subfolders">
+
             <button type="submit">Scan</button>
             <div id="scanSpinner" class="spinner" style="display: none;"></div>
         </form>
@@ -245,9 +272,14 @@
     <div id="fastScanSection" style="display:none;">
         <form id="fastScanForm">
             <h3>Directory path to scan:</h3>
-            <input type="text" id="fastScanDirectoryPath" placeholder="/Path/To/Directory" maxlength="100" required>
+            <div class="path-selector">
+                <input type="text" id="fastScanDirectoryPath" placeholder="C:\Path\To\Directory" required>
+                <button type="button" id="fastScanDirectoryBrowseButton" class="browse-btn">Choose</button>
+            </div>
+
             <h3>Include subfolders?</h3>
             <input type="checkbox" id="fastScanSubfolders">
+
             <button type="submit">Scan</button>
             <div id="fastScanSpinner" class="spinner" style="display: none;"></div>
         </form>
@@ -276,9 +308,12 @@
         </tbody>
     </table>
 
+    <div id="clearResultsContainer" class="clear-results-container" style="display: none;">
+        <button id="clearResultsButton" class="clear-btn">Clear Results</button>
+    </div>
+
     <script>
         let iocFilePath = "";
-
 
         document.getElementById("iocUploadForm").onsubmit = async function(event) {
             event.preventDefault();
@@ -342,6 +377,22 @@
         };
 
 
+        // Fetch directory data from the flask for "manual scan" section
+        document.getElementById('directoryBrowseButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/select_directory');
+                const data = await response.json();
+
+                if (data.path) {
+                    document.getElementById('directoryPath').value = data.path;
+                }
+            } catch (error) {
+                console.error('Error selecting directory:', error);
+                alert('Error: Could not open directory dialog. Please enter path manually.');
+            }
+        });
+
+
         document.getElementById("uploadResultsForm").onsubmit = async function(event) {
             event.preventDefault();
             let file = document.getElementById("scanResultsInput").files[0];
@@ -398,6 +449,38 @@
 
             document.getElementById("fastScanSpinner").style.display = "none";
         };
+
+        // Fetch directory data from the flask for "fast scan" section
+        document.getElementById('fastScanDirectoryBrowseButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/select_directory');
+                const data = await response.json();
+
+                if (data.path) {
+                    document.getElementById('fastScanDirectoryPath').value = data.path;
+                }
+            } catch (error) {
+                console.error('Error selecting directory:', error);
+                alert('Error: Could not open directory dialog. Please enter path manually.');
+            }
+        });
+
+
+        // Function to show/hide clear button based on results table visibility
+        function toggleClearButton() {
+            const table = document.getElementById('resultsTable');
+            const clearContainer = document.getElementById('clearResultsContainer');
+
+            if (table.style.display === 'none' || table.rows.length <= 1) {
+                clearContainer.style.display = 'none';
+            } else {
+                clearContainer.style.display = 'block';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('clearResultsButton').addEventListener('click', clearResults);
+        });
     </script>
 </body>
 </html>
