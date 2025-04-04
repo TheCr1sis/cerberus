@@ -51,7 +51,7 @@ def extract_archive(filepath):
         return None
 
 # Scan directories for files with matching IOCs
-def scan_directory(directory, iocs, check_subfolders, ioc_filename, archive_path=None):
+def scan_directory(directory, iocs, check_subfolders, ioc_filename, archive_path=None, is_recursive=False):
     matches = []
 
     for root, _, files in os.walk(directory):
@@ -61,7 +61,7 @@ def scan_directory(directory, iocs, check_subfolders, ioc_filename, archive_path
             if is_archive(filepath):
                 extracted_dir = extract_archive(filepath)
                 if extracted_dir:
-                    matches.extend(scan_directory(extracted_dir, iocs, check_subfolders, ioc_filename, archive_path=filepath)["matches"])
+                    matches.extend(scan_directory(extracted_dir,iocs,check_subfolders,ioc_filename,archive_path=filepath,is_recursive=True)["matches"])
                     shutil.rmtree(extracted_dir, ignore_errors=True)
                 continue
 
@@ -107,8 +107,10 @@ def scan_directory(directory, iocs, check_subfolders, ioc_filename, archive_path
         if not check_subfolders:
             break
 
-    # Save results to a JSON file inside "results" folder
-    saved_filename = save_scan_results(matches)
-    print(f"Scan results saved to {saved_filename}")
-
-    return {"matches": matches, "filename": saved_filename, "ioc_filename": ioc_filename}
+    # Save results at a TOP-LEVEL call to a JSON file inside "results" folder
+    if not is_recursive:
+        saved_filename = save_scan_results(matches)
+        print(f"Scan results saved to {saved_filename}")
+        return {"matches": matches, "filename": saved_filename, "ioc_filename": ioc_filename}
+    else:
+        return {"matches": matches, "filename": None, "ioc_filename": ioc_filename}
