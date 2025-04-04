@@ -52,9 +52,18 @@ def get_windows_directory():
     try:
         root = tk.Tk()
         root.withdraw()
-        return filedialog.askdirectory()
-    except:
+        root.attributes('-topmost', True)
+
+        folder = filedialog.askdirectory()
+        root.destroy()
+
+        if folder:
+            return folder.replace('/', '\\')
+
         return ""
+
+    except Exception as tk_error:
+        print(f"Tkinter method failed: {tk_error}")
 
 # Function to create .env file with default values if it doesn't exist
 def create_env_file():
