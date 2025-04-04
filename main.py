@@ -271,13 +271,17 @@ def fast_scan_route():
     if not directory or not os.path.exists(directory):
         return jsonify({"error": "Invalid directory path"}), 400
 
-    results = fast_scan(directory, check_subfolders)
-
-    return jsonify({
-        "results": results["results"],
-        "filename": results["filename"],
-        "ioc_filename": ioc_filename
-    })
+    try:
+        results = fast_scan(directory, check_subfolders)
+        return jsonify({
+            "results": results["results"],
+            "filename": results["filename"],
+            "ioc_filename": ioc_filename
+        })
+    except FileNotFoundError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Error: {str(e)}"}), 500
 
 
 # API route for online lookup

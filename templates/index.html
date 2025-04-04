@@ -473,32 +473,41 @@
 
             document.getElementById("fastScanSpinner").style.display = "block";
 
-            let response = await fetch("/fast_scan", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    "directory": directory,
-                    "check_subfolders": subfolders
-                })
-            });
+            try {
+             let response = await fetch("/fast_scan", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "directory": directory,
+                        "check_subfolders": subfolders
+                    })
+                });
 
-            let data = await response.json();
+                let data = await response.json();
 
-            displayResults(data.results);
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
 
-            // Display the filename of the results under the "Scan Results" text
-            const resultsFileName = document.getElementById("resultsFileName");
-            resultsFileName.textContent = `Scan results for: ${data.filename}`;
-            resultsFileName.style.display = 'block';
+                displayResults(data.results);
 
-            // Display the associated IOC file name
-            const associatedIocFileName = document.getElementById("associatedIocFileName");
-            associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
-            associatedIocFileName.style.display = 'block';
+                // Display the filename of the results under the "Scan Results" text
+                const resultsFileName = document.getElementById("resultsFileName");
+                resultsFileName.textContent = `Scan results for: ${data.filename}`;
+                resultsFileName.style.display = 'block';
 
-            await fetchFiles()
+                // Display the associated IOC file name
+                const associatedIocFileName = document.getElementById("associatedIocFileName");
+                associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
+                associatedIocFileName.style.display = 'block';
 
-            document.getElementById("fastScanSpinner").style.display = "none";
+                await fetchFiles();
+            } catch (error) {
+                alert("An error occurred during scanning: " + error.message);
+            } finally {
+                document.getElementById("fastScanSpinner").style.display = "none";
+            }
         };
 
         // Fetch directory data from the flask for "fast scan" section

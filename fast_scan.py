@@ -12,12 +12,22 @@ FAST_SCAN_HASHES = {
 
 # Load hashes from fast scan files
 def load_fast_scan_hashes():
-    hash_dict = {"md5": set(), "sha1": set(), "sha256": set()}
+    missing_files = []
 
     for hash_type, file_path in FAST_SCAN_HASHES.items():
-        if os.path.exists(file_path):
-            with open(file_path, "r") as f:
-                hash_dict[hash_type] = set(f.read().splitlines())
+        if not os.path.exists(file_path):
+            missing_files.append(file_path)
+
+    if missing_files:
+        raise FileNotFoundError(
+            f"Missing hash files: {', '.join(missing_files)}. "
+            f"Please ensure all hash files exist in the fast_scan folder."
+        )
+
+    hash_dict = {"md5": set(), "sha1": set(), "sha256": set()}
+    for hash_type, file_path in FAST_SCAN_HASHES.items():
+        with open(file_path, "r") as f:
+            hash_dict[hash_type] = set(line.strip() for line in f if line.strip())
 
     return hash_dict
 
