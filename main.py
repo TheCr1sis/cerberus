@@ -173,15 +173,26 @@ def upload_scan_results():
 
     file_path = os.path.join(RESULTS_FOLDER, file.filename)
     file.save(file_path)
+    filename = file.filename
 
     # Read and return the JSON content
     try:
         with open(file_path, "r") as f:
             scan_results = json.load(f)
+
+            ioc_filename = "N/A"
+            if scan_results and isinstance(scan_results, list) and len(scan_results) > 0:
+                ioc_filename = scan_results[0].get("associated_ioc_file", "N/A")
     except json.JSONDecodeError:
         return jsonify({"error": "Invalid JSON format"}), 400
 
-    return jsonify({"message": "File uploaded successfully", "file_path": file_path, "results": scan_results})
+    return jsonify({
+        "message": "File uploaded successfully",
+        "file_path": file_path,
+        "filename": filename,
+        "ioc_filename": ioc_filename,
+        "results": scan_results
+    })
 
 
 # Scanning route

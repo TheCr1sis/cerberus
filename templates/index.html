@@ -458,6 +458,16 @@
             }
 
             if (data.results) {
+                // Display the filename of the results under the "Scan Results" text
+                const resultsFileName = document.getElementById("resultsFileName");
+                resultsFileName.textContent = `Scan results for: ${data.filename}`;
+                resultsFileName.style.display = 'block';
+
+                // Display the associated IOC file name
+                const associatedIocFileName = document.getElementById("associatedIocFileName");
+                associatedIocFileName.textContent = `Associated IOC file: ${data.ioc_filename}`;
+                associatedIocFileName.style.display = 'block';
+
                 displayResults(data.results);
             }
 
