@@ -2,6 +2,8 @@ import json
 import os
 import hashlib
 from datetime import datetime
+from scanner import is_archive, extract_archive
+import shutil
 
 # Paths to precomputed hashes
 FAST_SCAN_HASHES = {
@@ -47,40 +49,54 @@ def compute_hashes(file_path):
     return hashes
 
 # Fast scan function
-def fast_scan(directory, check_subfolders):
+def fast_scan(directory, check_subfolders, archive_path=None, is_recursive=False):
     fast_scan_hashes = load_fast_scan_hashes()
     results = []
 
     for root, _, files in os.walk(directory):
         for filename in files:
             file_path = os.path.join(root, filename)
-            file_hashes = compute_hashes(file_path)
 
-            matched = []
-            for hash_type, hash_value in file_hashes.items():
-                if hash_value in fast_scan_hashes[hash_type]:
-                    matched.append(hash_type.upper())
+            if is_archive(file_path):
+                extracted_dir = extract_archive(file_path)
+                if extracted_dir:
+                    archive_context = file_path if archive_path is None else archive_path
+                    results.extend(fast_scan(extracted_dir,check_subfolders,archive_path=archive_context,is_recursive=True)["results"])
+                    shutil.rmtree(extracted_dir, ignore_errors=True)
+                continue
+
+            file_hashes = compute_hashes(file_path)
+            matched = [
+                hash_type.upper()
+                for hash_type, hash_value in file_hashes.items()
+                if hash_value in fast_scan_hashes[hash_type]
+            ]
 
             if matched:
+                display_path = os.path.join(archive_path, filename) if archive_path else file_path
                 results.append({
-                    "filepath": file_path,
+                    "filepath": display_path,
                     "filename": filename,
                     "size": os.path.getsize(file_path),
                     "hashes": file_hashes,
-                    "matched": matched
+                    "matched": matched,
+                    "archive_source": archive_path if archive_path else None
                 })
 
         if not check_subfolders:
             break
 
-    # Generate timestamped filename
-    timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
-    results_dir = "results"
-    os.makedirs(results_dir, exist_ok=True)
-    results_file = os.path.join(results_dir, f"fast_scan_{timestamp}.json")
+    # Save results for top-level scan to a results folder
+    if not is_recursive:
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
+        results_dir = "results"
+        os.makedirs(results_dir, exist_ok=True)
+        results_file = os.path.join(results_dir, f"fast_scan_{timestamp}.json")
 
-    # Save results to file
-    with open(results_file, "w") as f:
-        json.dump(results, f, indent=4)
+        with open(results_file, "w") as f:
+            json.dump(results, f, indent=4)
 
-    return {"results": results, "filename": results_file}
+        print(f"Fast scan results saved to {results_file}")
+        return {"results": results, "filename": results_file}
+
+    return {"results": results, "filename": None}
