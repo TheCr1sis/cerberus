@@ -1,7 +1,7 @@
-# IOC Scanner
+# Cerberus
 
 ## 📌 Project Description
-**IOC Scanner** is a Python-based tool designed to scan directories for files matching predefined Indicators of Compromise (IOCs). It allows users to create or load an IOC file containing filenames, file sizes, hashes (MD5, SHA1, SHA256), and specific strings to detect malicious or suspicious files within a given directory and subdirectories.
+**Cerberus** is a Python-based tool designed to scan directories for files matching predefined Indicators of Compromise (IOCs). It allows users to create or load an IOC file containing filenames, file sizes, hashes (MD5, SHA1, SHA256), and specific strings to detect malicious or suspicious files within a given directory and subdirectories.
 
 ## Features
 - Create or load an IOC file in JSON format.
@@ -17,12 +17,12 @@
 
 ## Installation
 
-To install and set up **IOC Scanner**, follow these steps:
+To install and set up **Cerberus**, follow these steps:
 
 1. **Clone the repository**  
    ```bash
-   git clone https://github.com/TheCr1sis/ioc_scanner.git
-   cd ioc_scanner
+   git clone https://github.com/TheCr1sis/cerberus.git
+   cd cerberus
    ```
 
 2. **Set up a virtual environment (optional but recommended)**  
@@ -38,7 +38,7 @@ To install and set up **IOC Scanner**, follow these steps:
 
 ## Usage
 
-To start the **IOC Scanner** web application, run the following command:
+To start the **Cerberus** web application, run the following command:
 
 ```bash
 python main.py
@@ -51,7 +51,7 @@ This will start a local web server on **http://127.0.0.1:5555/**. Open your brow
 - **Manual Scan:** Upload an IOC file and specify a directory for scanning.
 - **Fast Scan:** Quickly scan using preloaded IOC files.
 - **Upload Scan Results:** Load previously scanned results.
-- **Online Lookup:** Check file details against online malware databases (VirusTotal & MalwareBazaar).
+- **Online Lookup:** Check file details against online malware databases such as VirusTotal & MalwareBazaar (for in-app threat intelligence lookups it is recommended to get your VirusTotal and Malwarebazaar API keys)
 
 ## Testing
 
