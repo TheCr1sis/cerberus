@@ -55,7 +55,7 @@ This will start a local web server on **http://127.0.0.1:5555/**. Open your brow
 
 ## Testing
 
-A testing folder **target** is included in this repository, containing various files and subdirectories that you can use to test the IOC Scanner's functionality. You can specify the testing folder as the scan directory when prompted.
+A testing folder **target** is included in this repository, containing various files and subdirectories that you can use to test the Cerberus functionality. You can specify the testing folder as the scan directory when prompted.
 
 ## JSON Output Format
 The tool generates a JSON report containing details of matched files. Example output:
